@@ -39,7 +39,7 @@ def receive():
         nicknames.append(nickname)
         clients.append(client)
 
-        print(f'Nama yang bergabung adalah {nickname}!')
+        print(f'Nama yang bergabung dichat adalah {nickname}!')
         broadcast(f'{nickname} bergabung di chat!'.encode('ascii'))
         client.send('Tersambung dalam server!'.encode('ascii'))
 
