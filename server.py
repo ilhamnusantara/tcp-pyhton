@@ -2,7 +2,7 @@ import threading
 import socket
 import datetime
 
-host = '127.0.0.1'
+host = '165.22.251.42'
 port = 8079
 
 # SOCKET STREAM
