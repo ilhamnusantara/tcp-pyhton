@@ -3,7 +3,7 @@ import socket
 import datetime
 
 host = '127.0.0.1'
-port = 9999
+port = 8079
 
 # SOCKET STREAM
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

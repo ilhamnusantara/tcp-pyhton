@@ -4,7 +4,7 @@ import socket
 nickname = input("Masukan username : ")
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(('165.22.251.42', 9999))
+client.connect(('165.22.251.42', 8079))
 
 
 def receive():
