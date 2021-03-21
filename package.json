@@ -1,0 +1,11 @@
+{
+  "name": "tcp-pyhton",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ilhamnusantara/tcp-pyhton.git",
+  "author": "Maxxoto <ahmatdanis24@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "nodemon": "^2.0.7"
+  }
+}

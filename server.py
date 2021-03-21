@@ -1,50 +1,98 @@
 import threading
 import socket
+import datetime
 
-host = '127.0.0.1' 
+host = '127.0.0.1'
 port = 9999
 
+# SOCKET STREAM
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind((host, port))
-server.listen()
+# REUSE ADDRESS AND SOCKET
+server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-clients = []
-nicknames  = []
+
+server.bind((host, port))
+server.listen(10)
+
+# List of client
+list_clients = []
+# List of username
+list_of_username = []
+
 
 def broadcast(pesan):
-    for client in clients:
+    for client in list_clients:
         client.send(pesan)
 
-def handle(client):
+
+def handle(koneksi):
+    # Greeting
+    koneksi.send(
+        ("\n =====Selamat datang di shellchat===== \n").encode('ascii'))
+
     while True:
         try:
-            pesan = client.recv(1024)
+            pesan = koneksi.recv(1024)
             broadcast(pesan)
         except:
-            index  = clients.index(client)
-            clients.remove(client)
-            client.close()
-            nickname = nicknames[index]
-            broadcast(f'{nickname} Keluar dari chat !'.encode('ascii'))
-            nicknames.remove(nickname)
+            """
+                Jika koneksi terputus hapus koneksi dari server
+            """
+
+            # Cari index dari list client
+            index = list_clients.index(koneksi)
+
+            # Hapus koneksi dari list client
+            list_clients.remove(index)
+
+            # Tutup koneksi
+            koneksi.close()
+
+            # Cari username dari list username
+            username = list_of_username[index]
+
+            # Print di server bahwa user tersebut keluar
+            print(
+                "<| {} |-{}> terkoneksi.".format(username, datetime.datetime.now()))
+
+            # Broadcast ke tiap user bahwa keluar
+            broadcast(f'{username} Keluar dari chat !'.encode('ascii'))
+
+            # Hapus username dari list
+            list_of_username.remove(username)
+
             break
 
+
 def receive():
+    """
+        This method to receive incoming connection from client
+    """
+
     while True:
         client, alamat = server.accept()
-        print(f"tersambung dengan {str(alamat)}")
 
+        # Mengirim pesan untuk meminta username klien
         client.send('NICK'.encode('ascii'))
-        nickname = client.recv(1090).decode('ascii')
-        nicknames.append(nickname)
-        clients.append(client)
 
-        print(f'Nama yang bergabung dichat adalah {nickname}!')
-        broadcast(f'{nickname} bergabung di chat!'.encode('ascii'))
-        client.send('Tersambung dalam server!'.encode('ascii'))
+        # Decode ascii code username
+        username = client.recv(1090).decode('ascii')
+
+        # Cetak jika user terkoneksi
+        print(
+            "<|{} {}  |-{}> terkoneksi.".format(alamat[0], username, datetime.datetime.now()))
+
+        # Tampung username ke list username
+        list_of_username.append(username)
+
+        # Save client name
+        list_clients.append(client)
+
+        broadcast(f'{username} bergabung di chat!'.encode('ascii'))
 
         thread = threading.Thread(target=handle, args=(client,))
         thread.start()
 
-print("Server sedang memproses...")
+
+print("Server online di port {}, menunggu koneksi...".format(port))
 receive()
